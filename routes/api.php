@@ -20,18 +20,15 @@ use App\Http\Controllers\Api\AuthController;
 //     return $request->user();
 // });
 
-Route::group([
-    'middleware' => 'api',
-], function () {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);    
-});
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/logout', [AuthController::class, 'logout']);
+Route::post('/refresh', [AuthController::class, 'refresh']);
+Route::get('/user-profile', [AuthController::class, 'userProfile']);    
 
 
-Route::middleware(['jwt.verify'])->group(function () {
+// Route::middleware(['jwt.verify'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
         
     Route::get('/posts' , [PostController::class , 'index']);
     Route::get('/post/{id}' , [PostController::class , 'single_post']);

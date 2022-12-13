@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PostRequest;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Facades\Validator;
@@ -28,49 +29,24 @@ class PostController extends BaseController
         return $this->sendResponse(new PostResource($post) , 'true');
     }
 
-    public function store_post(Request $request)
+    public function store_post(PostRequest $request)
     {
-        $validator = Validator::make($request->all() , [
-            'title'=>'required',
-            'body'=>'required',
-        ]);
-        
-        if($validator->fails())
-        {
-            return $this->sendError($validator->errors());
-        }
-
-        $data = Post::create([
-            'title'=>$request->title,
-            'body'=>$request->body,
-        ]);
-
+        $validation = $request->validated();
+        $data = Post::create($validation);
         return $this->sendResponse($data , 'true');
     }
 
-    public function update_post($id , Request $request)
+    public function update_post($id , PostRequest $request)
     {
-        $validator = Validator::make($request->all() , [
-            'title'=>'required',
-            'body'=>'required',
-        ]);
-        
-        if($validator->fails())
-        {
-            return $this->sendError($validator->errors());
-        }
-        
         $data = Post::find($id);
         
         if($data == false)
         {
             return $this->sendError('Post Not Found');
         }
-        
-        $data->update([
-            'title'=>$request->title,
-            'body'=>$request->body,
-        ]);
+
+        $validation = $request->validated();
+        $data->update($validation);
         
         return $this->sendResponse($data , 'true');
     }
